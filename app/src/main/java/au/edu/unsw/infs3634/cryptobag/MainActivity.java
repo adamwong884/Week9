@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CoinDatabase coinData = Room.databaseBuilder(getApplicationContext(), CoinDatabase.class, "coinDatabase").build();
+        mDb = Room.databaseBuilder(getApplicationContext(), CoinDatabase.class, "coinDatabase").build();
 
         if (findViewById(R.id.detail_container) != null) {
             mTwoPane = true;
@@ -76,15 +76,18 @@ public class MainActivity extends AppCompatActivity {
                         .baseUrl("https://api.coinlore.com")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
+
                 CoinService service = retrofit.create(CoinService.class);
                 Call<CoinLoreResponse> coinsCall = service.getCoins();
-                Response<CoinLoreResponse> coinLoreResponseResponse = coinsCall.execute();
 
+                Response<CoinLoreResponse> coinLoreResponseResponse = coinsCall.execute();
                 List<Coin> coins = coinLoreResponseResponse.body().getData();
+
                 mDb.coinDao().deleteAll(mDb.coinDao().getCoins().toArray(new Coin[mDb.coinDao().getCoins().size()]));
                 mDb.coinDao().insertAll(coins.toArray(new Coin[coins.size()]));
 
                 return coins;
+
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;

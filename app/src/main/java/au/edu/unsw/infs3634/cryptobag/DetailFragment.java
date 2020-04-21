@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
@@ -29,7 +30,7 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CoinDatabase mDb = Room.databaseBuilder(getContext(),CoinDatabase.class, "coin_database").build();
+        mDb = Room.databaseBuilder(getContext(),CoinDatabase.class, "coin_database").build();
         if(getArguments().containsKey(ARG_ITEM_ID)) {
 
 
@@ -37,7 +38,20 @@ public class DetailFragment extends Fragment {
 
         }
     }
+    private class GetCoinDBTask extends AsyncTask<String, Void, Coin>{
 
+
+        @Override
+        protected Coin doInBackground(String... ids) {
+            return mDb.coinDao().getCoin(ids[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Coin coin){
+            mCoin = coin;
+            updateUi();
+        }
+    }
 
 
     @Override
@@ -65,6 +79,7 @@ public class DetailFragment extends Fragment {
                     searchCoin(mCoin.getName());
                 }
             });
+            ((AppCompatActivity) rootView.getContext()).setTitle(mCoin.getName());
         }
     }
 
@@ -73,18 +88,5 @@ public class DetailFragment extends Fragment {
         startActivity(intent);
     }
 
-    private class GetCoinDBTask extends AsyncTask<String, Void, Coin>{
 
-
-        @Override
-        protected Coin doInBackground(String... ids) {
-            return mDb.coinDao().getCoin(ids[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Coin coin){
-            mCoin = coin;
-            updateUi();
-        }
-    }
 }
