@@ -19,7 +19,6 @@ import java.util.List;
 import au.edu.unsw.infs3634.cryptobag.Entities.Coin;
 import au.edu.unsw.infs3634.cryptobag.Entities.CoinLoreResponse;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -37,7 +36,7 @@ public class DetailFragment extends Fragment {
         if(getArguments().containsKey(ARG_ITEM_ID)) {
 
 
-            new GetCoinTask().execute();
+            new GetCoinDBTask().execute(getArguments().getString(ARG_ITEM_ID));
 /**
             coinsCall.enqueue(new Callback<CoinLoreResponse>() {
                 @Override
@@ -124,5 +123,20 @@ public class DetailFragment extends Fragment {
     private void searchCoin(String name) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=" + name));
         startActivity(intent);
+    }
+
+    private class GetCoinDBTask extends AsyncTask<String, Void, Coin>{
+
+
+        @Override
+        protected Coin doInBackground(String... ids) {
+            return CoinDatabase.coinDao().getCoin(ids[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Coin coin){
+            mCoin = coin;
+            updateUi();
+        }
     }
 }
