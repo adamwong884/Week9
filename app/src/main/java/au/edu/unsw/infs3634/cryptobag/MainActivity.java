@@ -2,7 +2,6 @@ package au.edu.unsw.infs3634.cryptobag;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MAIN_ACTIVITY";
     private boolean mTwoPane;
     private CoinAdapter mAdapter;
+    private CoinDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
                 Response<CoinLoreResponse> coinLoreResponseResponse = coinsCall.execute();
 
                 List<Coin> coins = coinLoreResponseResponse.body().getData();
-                CoinDatabase.coinDao().deleteAll(CoinDatabase.coinDao().toArray(new Coin[CoinDatabase.coinDao().getCoins().size()]));
-                CoinDatabase.coinDao().insertAll(coins.toArray(new Coin[coins.size()]));
+                mDb.coinDao().deleteAll(mDb.coinDao().getCoins().toArray(new Coin[mDb.coinDao().getCoins().size()]));
+                mDb.coinDao().insertAll(coins.toArray(new Coin[coins.size()]));
 
                 return coins;
             } catch (IOException e) {
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected List<Coin> doInBackground(Void... voids) {
-            return CoinDatabase.coinDao().getCoins();
+            return mDb.coinDao().getCoins();
         }
 
         @Override

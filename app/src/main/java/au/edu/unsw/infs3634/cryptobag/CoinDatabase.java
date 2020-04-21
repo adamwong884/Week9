@@ -8,7 +8,6 @@ import au.edu.unsw.infs3634.cryptobag.Entities.CoinDAO;
 
 @Database(entities = {Coin.class}, version = 1)
 public abstract class CoinDatabase extends RoomDatabase {
-    public static CoinDAO coinDao() {
-        return null;
-    }
+    public abstract CoinDAO coinDao();
+
 }
