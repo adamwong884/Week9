@@ -34,26 +34,7 @@ public class DetailFragment extends Fragment {
 
 
             new GetCoinDBTask().execute(getArguments().getString(ARG_ITEM_ID));
-/**
-            coinsCall.enqueue(new Callback<CoinLoreResponse>() {
-                @Override
-                public void onResponse(Call<CoinLoreResponse> call, Response<CoinLoreResponse> response) {
-                    List<Coin> coins = response.body().getData();
-                    for(Coin coin : coins) {
-                        if(coin.getId().equals(getArguments().getString(ARG_ITEM_ID))) {
-                            mCoin = coin;
-                            break;
-                        }
-                    }
-                    updateUi();
-                    DetailFragment.this.getActivity().setTitle(mCoin.getName());
-                }
 
-                @Override
-                public void onFailure(Call<CoinLoreResponse> call, Throwable t) {
-
-                }
-            });**/
         }
     }
 
