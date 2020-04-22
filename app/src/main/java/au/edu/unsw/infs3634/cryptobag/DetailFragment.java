@@ -1,9 +1,11 @@
 package au.edu.unsw.infs3634.cryptobag;
 
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,26 +22,26 @@ import au.edu.unsw.infs3634.cryptobag.Entities.Coin;
 
 public class DetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
-
-    private CoinDatabase mDb;
+    public static final String TAG = "DetailFragment";
     private Coin mCoin;
+    private CoinDatabase mDb;
 
     public DetailFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDb = Room.databaseBuilder(getContext(), CoinDatabase.class, "coin-database").build();
 
-        mDb = Room.databaseBuilder(getContext(),CoinDatabase.class, "coin_database").build();
         if(getArguments().containsKey(ARG_ITEM_ID)) {
-
 
             new GetCoinDBTask().execute(getArguments().getString(ARG_ITEM_ID));
 
         }
     }
-    private class GetCoinDBTask extends AsyncTask<String, Void, Coin>{
 
+
+    private class GetCoinDBTask extends AsyncTask<String, Void, Coin> {
 
         @Override
         protected Coin doInBackground(String... ids) {
@@ -47,10 +49,12 @@ public class DetailFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(Coin coin){
+        protected void onPostExecute(Coin coin) {
             mCoin = coin;
             updateUi();
         }
+
+
     }
 
 
@@ -61,9 +65,11 @@ public class DetailFragment extends Fragment {
         return rootView;
     }
 
-    private void updateUi() {
+    private void updateUi(){
+
         View rootView = getView();
-        if(mCoin != null) {
+Log.d(TAG, "update UI START");
+        if(rootView != null && mCoin!=null) {
             NumberFormat formatter = NumberFormat.getCurrencyInstance();
             ((TextView) rootView.findViewById(R.id.tvName)).setText(mCoin.getName());
             ((TextView) rootView.findViewById(R.id.tvSymbol)).setText(mCoin.getSymbol());
@@ -73,6 +79,7 @@ public class DetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.tvChange7dField)).setText(mCoin.getPercentChange7d() + " %");
             ((TextView) rootView.findViewById(R.id.tvMarketcapField)).setText(formatter.format(Double.valueOf(mCoin.getMarketCapUsd())));
             ((TextView) rootView.findViewById(R.id.tvVolumeField)).setText(formatter.format(Double.valueOf(mCoin.getVolume24())));
+
             ((ImageView) rootView.findViewById(R.id.ivSearch)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -81,12 +88,12 @@ public class DetailFragment extends Fragment {
             });
             ((AppCompatActivity) rootView.getContext()).setTitle(mCoin.getName());
         }
+        Log.d(TAG, "update UI DONE");
+
     }
 
     private void searchCoin(String name) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=" + name));
         startActivity(intent);
     }
-
-
 }

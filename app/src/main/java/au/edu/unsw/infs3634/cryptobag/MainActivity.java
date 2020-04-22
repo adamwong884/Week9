@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://api.coinlore.com")
+                        .baseUrl("https://api.coinlore.net")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
 
